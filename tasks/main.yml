@@ -1,0 +1,29 @@
+---
+- name: get archive url from s3
+  aws_s3:
+    mode: "geturl"
+    bucket: "{{ s3_bucket }}"
+    object: "{{ s3_path }}"
+    max_keys: 1
+  run_once: true
+  delegate_to: 127.0.0.1
+  register: s3_url
+
+- block:
+  - name: make sure target path is clean
+    file:
+      path: "{{ target_path }}"
+      state: absent
+
+  - name: create directory
+    file:
+      path: "{{ target_path }}"
+      state: directory
+      mode: 0755
+
+  - name: download object from s3://{{ s3_url.url }} into {{ target_path }}
+    get_url:
+       url: "{{ s3_url.url }}"
+       dest: "{{ target_path }}"
+
+  become: yes
