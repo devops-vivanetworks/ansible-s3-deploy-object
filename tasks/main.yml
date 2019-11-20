@@ -6,6 +6,7 @@
     object: "{{ s3_path }}"
     max_keys: 1
     permission: bucket-owner-full-control
+    region: ap-southeast-1
   run_once: true
   delegate_to: 127.0.0.1
   register: s3_url
